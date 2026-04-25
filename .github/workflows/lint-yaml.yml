@@ -1,0 +1,44 @@
+---
+# Reusable YAML linting workflow.
+# Call from any repo:
+#
+#   jobs:
+#     lint-yaml:
+#       uses: dchonch/actions/.github/workflows/lint-yaml.yml@main
+#
+# To use a custom yamllint config file (default: relaxed):
+#
+#   jobs:
+#     lint-yaml:
+#       uses: dchonch/actions/.github/workflows/lint-yaml.yml@main
+#       with:
+#         config: ".yamllint.yml"
+
+name: Lint YAML
+
+on:
+  workflow_call:
+    inputs:
+      config:
+        description: "yamllint config file path or preset (relaxed, default)"
+        type: string
+        default: "relaxed"
+
+jobs:
+  yamllint:
+    name: yamllint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Run yamllint
+        run: |
+          find . -name '*.yml' -o -name '*.yaml' \
+            | grep -v '^./.git/' \
+            | xargs yamllint -d '${{ inputs.config }}'

@@ -1,0 +1,68 @@
+---
+# Reusable security scanning workflow.
+# Call from any repo:
+#
+#   jobs:
+#     security:
+#       uses: dchonch/actions/.github/workflows/security.yml@main
+#       permissions:
+#         contents: read
+#         pull-requests: read
+#
+# To honour a .trivyignore file in the calling repo:
+#
+#   jobs:
+#     security:
+#       uses: dchonch/actions/.github/workflows/security.yml@main
+#       with:
+#         trivyignore: true
+#       permissions:
+#         contents: read
+#         pull-requests: read
+
+name: Security scanning
+
+on:
+  workflow_call:
+    inputs:
+      trivyignore:
+        description: "Honour a .trivyignore file in the calling repo"
+        type: boolean
+        default: false
+
+jobs:
+  gitleaks:
+    name: Secret detection (gitleaks)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@dcedce43c6f43de0b836d1fe38946645c9c638dc # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  trivy:
+    name: Filesystem scan (trivy)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Run trivy filesystem scan
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          exit-code: 1
+          scanners: secret,misconfig
+          trivyignores: ${{ inputs.trivyignore && '.trivyignore' || '' }}

@@ -1,0 +1,45 @@
+---
+# Reusable Markdown linting workflow.
+# Call from any repo:
+#
+#   jobs:
+#     lint-markdown:
+#       uses: dchonch/actions/.github/workflows/lint-markdown.yml@main
+#       permissions:
+#         contents: read
+#
+# To lint a specific glob (default: all .md files):
+#
+#   jobs:
+#     lint-markdown:
+#       uses: dchonch/actions/.github/workflows/lint-markdown.yml@main
+#       with:
+#         glob: "docs/**/*.md"
+#       permissions:
+#         contents: read
+
+name: Lint Markdown
+
+on:
+  workflow_call:
+    inputs:
+      glob:
+        description: "Glob pattern passed to markdownlint-cli2"
+        type: string
+        default: "**/*.md"
+
+jobs:
+  markdownlint:
+    name: markdownlint-cli2
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Install markdownlint-cli2
+        run: npm install -g markdownlint-cli2
+
+      - name: Run markdownlint
+        run: markdownlint-cli2 '${{ inputs.glob }}'

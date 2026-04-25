@@ -1,0 +1,42 @@
+---
+# Reusable shell script linting workflow.
+# Call from any repo:
+#
+#   jobs:
+#     lint-shell:
+#       uses: dchonch/actions/.github/workflows/lint-shell.yml@main
+#
+# To lint a specific path pattern (default: all .sh files excluding .git):
+#
+#   jobs:
+#     lint-shell:
+#       uses: dchonch/actions/.github/workflows/lint-shell.yml@main
+#       with:
+#         path: "scripts/"
+
+name: Lint shell scripts
+
+on:
+  workflow_call:
+    inputs:
+      path:
+        description: "Path or glob passed to find for .sh files (default: entire repo)"
+        type: string
+        default: "."
+
+jobs:
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Install shellcheck
+        run: pip install shellcheck-py
+
+      - name: Run shellcheck
+        run: |
+          find ${{ inputs.path }} -name '*.sh' -not -path '*/.git/*' -exec shellcheck -x {} +
