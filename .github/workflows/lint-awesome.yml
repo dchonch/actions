@@ -1,0 +1,35 @@
+---
+# Reusable awesome list linting workflow.
+# Validates that a list follows the awesome list spec (badge, TOC,
+# description format, etc.) using the official awesome-lint tool.
+#
+# Call from any repo:
+#
+#   jobs:
+#     lint-awesome:
+#       uses: dchonch/actions/.github/workflows/lint-awesome.yml@main
+#       permissions:
+#         contents: read
+
+name: Lint Awesome list
+
+on:
+  workflow_call:
+
+jobs:
+  awesome-lint:
+    name: awesome-lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "lts/*"
+
+      - name: Run awesome-lint
+        run: npx awesome-lint
