@@ -2,5 +2,38 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
-  ]
+  ],
+  "schedule": [
+    "on monday"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "minimumReleaseAge": "2 days"
+    },
+    {
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "groupName": "patch and minor updates"
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "schedule": [
+      "at any time"
+    ],
+    "minimumReleaseAge": "0 days",
+    "labels": [
+      "security"
+    ]
+  }
 }
