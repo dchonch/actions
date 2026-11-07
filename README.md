@@ -11,6 +11,8 @@ Shared reusable GitHub Actions workflows. Update action versions here once — a
 | [`lint-yaml.yml`](.github/workflows/lint-yaml.yml) | yamllint | `config` (string) |
 | [`lint-markdown.yml`](.github/workflows/lint-markdown.yml) | markdownlint-cli2 | `glob` (string) |
 | [`lint-awesome.yml`](.github/workflows/lint-awesome.yml) | awesome-lint | — |
+| [`stale.yml`](.github/workflows/stale.yml) | actions/stale | `days-before-stale` (number), `days-before-close` (number), `exempt-labels` (string) |
+| [`label.yml`](.github/workflows/label.yml) | actions/labeler | `config` (string), `sync-labels` (bool) |
 
 ## Usage
 
@@ -82,6 +84,37 @@ jobs:
     uses: dchonch/actions/.github/workflows/lint-awesome.yml@main
     permissions:
       contents: read
+```
+
+### Stale issues and pull requests
+
+```yaml
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  stale:
+    uses: dchonch/actions/.github/workflows/stale.yml@main
+    permissions:
+      issues: write
+      pull-requests: write
+```
+
+### Pull request labeling
+
+Needs a labeler config in the calling repo (default `.github/labeler.yml`).
+
+```yaml
+on: pull_request_target
+
+jobs:
+  label:
+    uses: dchonch/actions/.github/workflows/label.yml@main
+    permissions:
+      contents: read
+      pull-requests: write
 ```
 
 ## Updating action versions
