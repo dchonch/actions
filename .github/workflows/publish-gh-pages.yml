@@ -20,7 +20,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: avrea-ubuntu-latest-2-vcpu
     permissions:
       contents: read
     steps:
@@ -41,7 +41,7 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on: ubuntu-latest
+    runs-on: avrea-ubuntu-latest-2-vcpu
     needs: build
     permissions:
       pages: write

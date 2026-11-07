@@ -48,7 +48,7 @@ on:
 jobs:
   stale:
     name: Flag stale issues and pull requests
-    runs-on: ubuntu-latest
+    runs-on: avrea-ubuntu-latest-2-vcpu
     permissions:
       issues: write
       pull-requests: write

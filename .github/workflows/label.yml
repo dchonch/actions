@@ -43,7 +43,7 @@ on:
 jobs:
   label:
     name: Label pull requests
-    runs-on: ubuntu-latest
+    runs-on: avrea-ubuntu-latest-2-vcpu
     permissions:
       contents: read
       pull-requests: write
